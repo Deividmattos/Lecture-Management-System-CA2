@@ -205,6 +205,124 @@ namespace CA2_Lecture_Management_System
             Console.WriteLine("\nLecture added successfully.");
             Pause();
         }
+          private void ViewLecture()
+        {
+            Console.Clear();
+            Console.WriteLine("--------------- VIEW LECTURE ---------------");
+
+            string code = ReadRequiredString("Enter Subject Code: ");
+            Lecture lecture = FindLecture(code);
+
+            if (lecture == null)
+            {
+                ShowError("Lecture not found.");
+                return;
+            }
+
+            DisplayLectureDetails(lecture);
+            Pause();
+        }
+
+        private void ListLectures()
+        {
+            Console.Clear();
+            Console.WriteLine("--------------- ALL LECTURES ---------------");
+
+            if (lectures.Count == 0)
+            {
+                Console.WriteLine("No lectures are currently stored.");
+                Pause();
+                return;
+            }
+
+            foreach (Lecture lecture in lectures)
+            {
+                Console.WriteLine($"[{lecture.GetLectureType()}] {lecture.SubjectCode} - {lecture.SubjectName}");
+                Console.WriteLine($"Lecturer: {lecture.LecturerName} | Hours: {lecture.LectureHours}");
+                Console.WriteLine($"Description: {lecture.GetDescription()}");
+                Console.WriteLine("----------------------------------------------");
+            }
+
+            Pause();
+        }
+
+        private void EditLecture()
+        {
+            
+        }
+        Console.Clear();
+            Console.WriteLine("--------------- EDIT LECTURE ---------------");
+
+            string code = ReadRequiredString("Enter Subject Code to edit: ");
+            Lecture lecture = FindLecture(code);
+
+            if (lecture == null)
+            {
+                ShowError("Lecture not found.");
+                return;
+            }
+
+            Console.WriteLine("\nPress ENTER to keep the current value.");
+
+            Console.Write($"Subject Name ({lecture.SubjectName}): ");
+            string name = Console.ReadLine() ?? "";
+            if (!string.IsNullOrWhiteSpace(name))
+                lecture.SubjectName = name.Trim();
+
+            Console.Write($"Lecturer Name ({lecture.LecturerName}): ");
+            string lecturer = Console.ReadLine() ?? "";
+            if (!string.IsNullOrWhiteSpace(lecturer))
+                lecture.LecturerName = lecturer.Trim();
+
+            Console.Write($"Lecture Hours ({lecture.LectureHours}): ");
+            string hoursInput = Console.ReadLine() ?? "";
+
+            if (!string.IsNullOrWhiteSpace(hoursInput))
+            {
+                if (int.TryParse(hoursInput, out int hours) && hours > 0)
+                    lecture.LectureHours = hours;
+                else
+                    ShowError("Invalid hours. The previous value was kept.");
+            }
+
+            SaveToFile();
+            Console.WriteLine("\nLecture updated successfully.");
+            Pause();
+        }
+
+        private void DeleteLecture()
+        {
+            Console.Clear();
+            Console.WriteLine("--------------- DELETE LECTURE ---------------");
+
+            string code = ReadRequiredString("Enter Subject Code to delete: ");
+            Lecture lecture = FindLecture(code);
+
+            if (lecture == null)
+            {
+                ShowError("Lecture not found.");
+                return;
+            }
+
+            DisplayLectureDetails(lecture);
+
+            Console.Write("\nAre you sure you want to delete this lecture? (Y/N): ");
+            string confirmation = (Console.ReadLine() ?? "").Trim().ToUpper();
+
+            if (confirmation == "Y")
+            {
+                lectures.Remove(lecture);
+                Lecture.SetLectureCount(lectures.Count);
+                SaveToFile();
+                Console.WriteLine("\nLecture deleted successfully.");
+            }
+            else
+            {
+                Console.WriteLine("\nDelete cancelled.");
+            }
+
+            Pause();
+        }
     }
     
 }
